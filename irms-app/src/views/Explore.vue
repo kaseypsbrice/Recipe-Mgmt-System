@@ -6,7 +6,7 @@
     <!-- Divider -->
     <hr class="my-5 border-amber-800">
     <!-- Search Bar -->
-    <div class="search-bar">
+    <div class="search-bar btn-bar">
       <img src="../assets/search-icon.svg" style="height: 1.3em; width: 1.3em;">
       <input type="search" placeholder="Search..." class="search-input" />
     </div>

@@ -5,17 +5,20 @@
     <div class="text-lg">@username</div>
     <!-- Divider -->
     <hr class="my-5 border-amber-800">
-    <!-- Search Bar -->
-    <div class="w-1/3">
-      <div class="search-bar">
-        <img src="../assets/search-icon.svg" style="height: 1.3em; width: 1.3em;">
-        <input type="search" placeholder="Search..." class="search-input" />
+    <!-- Container for btn-bar items -->
+    <div class="flex items-center w-full gap-4">
+      <!-- Search Bar -->
+      <div class="w-1/2 flex">
+        <div class="search-bar btn-bar">
+          <img src="../assets/search-icon.svg" style="height: 1.3em; width: 1.3em;">
+          <input type="search" placeholder="Search..." class="search-input" />
+        </div>
       </div>
+      <!-- Create New Recipe Button -->
+      <div class="create-new-recipe-btn btn-bar">Create New Recipe</div>
+      <!-- Settings Button -->
+      <div class="settings-btn btn-bar">Settings</div>
     </div>
-    <!-- Create New Recipe Button -->
-    <div class="create-new-recipe-btn"></div>
-    <!-- Settings Button -->
-    <!-- <div class="settings-btn"></div> -->
 
     <!-- Explore Recipes -->
     <div class="explore-recipes-container">
