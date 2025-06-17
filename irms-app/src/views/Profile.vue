@@ -15,9 +15,11 @@
         </div>
       </div>
       <!-- Create New Recipe Button -->
-      <div class="create-new-recipe-btn btn-bar">Create New Recipe</div>
+      <div class="create-new-recipe-btn btn-bar cursor-pointer">
+        <RouterLink to="/create-new-recipe">Create New Recipe</RouterLink>
+      </div>
       <!-- Settings Button -->
-      <div class="settings-btn btn-bar">Settings</div>
+      <div class="settings-btn btn-bar cursor-pointer">Settings</div>
     </div>
 
     <!-- Explore Recipes -->

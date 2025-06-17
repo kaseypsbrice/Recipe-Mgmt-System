@@ -2,10 +2,10 @@
 @import "tailwindcss";
 @tailwind utilities;
 
-/* * {
-    border: 2px dotted red;
-} */
-/* Used to assist with visual debugging */
+* {
+    /* border: 2px dotted red; */
+    box-sizing: border-box;
+}
 
 body {
     background-color: #FFF1E2;
@@ -92,15 +92,58 @@ body {
  * across all browsers. */
 
 .create-new-recipe-btn {
-    background-color: #B8DD98;
+    background-color: #b8dd98;
     border: 1px solid #4ea359;
     width: 20em;
     justify-content: center;
 }
 
 .settings-btn {
-    background-color: #DDAC98;
+    background-color: #ddac98;
     border: 1px solid #ac4646;
     width: 20em;
+    justify-content: center;
+}
+
+.create-recipe-form {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    height: 50em;
+    width: 100%;
+    background-color: #ffffff80;
+    margin-bottom: 10em;
+    border-radius: 10px;
+    border: 1px solid #bd7f6780;
+}
+
+.input-field {
+    width: 100%;
+    border: 1px solid #925746;
+    background-color: #f4e8db;
+}
+
+.add-btn {
+    background-color: #b8dd98;
+    border: 1px solid #407a3b;
+    position: absolute;
+    justify-content: center;
+    width: 100%;
+}
+
+.submit-btn {
+    background-color: #b8dd98;
+    border: 1px solid #407a3b;
+    width: 50%;
+    text-align: center;
+    justify-content: center;
+}
+
+.cancel-btn {
+    background-color: #ddac98;
+    border: 1px solid #ac4646;
+    width: 50%;
+    text-align: center;
     justify-content: center;
 }
