@@ -1,3 +1,22 @@
+<script setup>
+import { ref } from 'vue'
+
+const imgPreview = ref(null)
+
+function handleImageUpload(event) {
+  const file = event.target.files[0]
+  if (file && file.type.startsWith('image/')) {
+    const reader = new FileReader()
+    reader.onload = () => {
+      imgPreview.value = reader.result
+    }
+    reader.readAsDataURL(file)
+  } else {
+    imgPreview.value = null
+  }
+}
+</script>
+
 <template>
   <main class="pt-10 px-64">
     <!-- Heading -->
@@ -36,7 +55,20 @@
         <!-- Steps -->
         <div class="flex flex-col gap-3 relative">
           <label for="steps" class="text-lg">Steps</label>
-          <input type="text" name="steps" required placeholder="" class="input-field btn-bar" />
+
+          <div class="relative flex items-center input-field btn-bar">
+            <textarea type="text" name="steps" required placeholder="" class="w-full h-full pr-14 rounded-[10px]"></textarea>
+            <!-- Add Image for Step -->
+            <label for="recipeImage" class="upload-btn cursor-pointer">
+              <img src="../assets/upload.svg" alt="Upload" />
+            </label>
+            <!-- Hidden File Input -->
+            <input type="file" id="recipeImage" name="recipeImage" accept="image/*" class="hidden"
+              @change="handleImageUpload" />
+            <!-- Image Preview -->
+            <img v-if="imgPreview" :src="imgPreview" alt="Image Preview" class="step-img-preview" />
+          </div>
+
           <!-- Add Step Button -->
           <div class="btn-bar add-btn top-full mt-5 cursor-pointer">
             +
