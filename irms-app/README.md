@@ -33,27 +33,3 @@ npm run build
 ```sh
 npm run test:unit
 ```
-
-## Workplace Settings in VScode
-
-It took me a while to figure this out.
-
-The extension for Tailwind CSS Intellisense might not work in vscode when working with Vue.js.
-Intellisense is responsible for auto-complete suggestions, so it's preferable to have it enabled.
-
-To resolve this issue:
-
-* CTRL+SHIFT+P
-* Type "Open Workspace Settings (JSON)" and select the corresponding suggestion
-* Copy the below configuration
-* Add it to settings.json
-* Restart VScode
-
-```
-{
-"tailwindCSS.experimental.configFile": "src/assets/index.css",
-  "editor.quickSuggestions": {
-    "strings": true
-  }
-}
-```
