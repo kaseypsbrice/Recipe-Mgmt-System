@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ConfigDict, Field
-from typing import Annotated
+from typing import Annotated, Optional, List
 from datetime import datetime
 
 # This file defines the response models for our API.
@@ -27,3 +27,48 @@ class UserIn(BaseModel):
     username: Annotated[str, Field(min_length=3, max_length=50)]
     password: Annotated[str, Field(min_length=8, max_length=72)]
 # Annotated helps validate input and implements constraints using Field()
+
+class StepOut(BaseModel):
+    step_id: int
+    step_number: int
+    instruction: str
+
+    model_config = ConfigDict(from_attributes=True)
+
+class StepIn(BaseModel):
+    img_path: Optional[str]
+    instruction: str
+
+class IngredientOut(BaseModel):
+    ingredient_id: int
+    name: str
+    quantity: float
+    unit: str
+
+    model_config = ConfigDict(from_attributes=True)
+
+class IngredientIn(BaseModel):
+    name: Annotated[str, Field(min_length=2, max_length=100)]
+    quantity: Annotated[float, Field(gt=0)]
+    unit: Annotated[str, Field(max_length=20)]
+
+class RecipeOut(BaseModel):
+    recipe_id: int
+    name: str
+    description: Optional[str]
+    servings: int
+    cook_time_min: int
+    created_at: datetime
+    steps: List[StepOut]
+    ingredients: List[IngredientOut]
+
+    model_config = ConfigDict(from_attributes=True)
+
+class RecipeIn(BaseModel):
+    name: Annotated[str, Field(min_length=3)]
+    img_path: Optional[str]
+    description: Optional[str]
+    servings: int
+    cook_time_min: int
+    steps: List[StepOut]
+    ingredients: List[IngredientOut]
