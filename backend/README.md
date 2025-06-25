@@ -3,6 +3,22 @@
 > [!NOTE]
 > This project was setup in an Ubuntu VM.
 
+## Testing with FastAPI
+
+Launch FastAPI server to run the API locally:
+
+```
+uvicorn api:app --reload
+```
+
+Navigate to:
+
+```
+http://localhost:8000/docs
+```
+
+FastAPI has built-in interactive documentation via Swagger.
+
 ## Database
 
 Login to postgres:
