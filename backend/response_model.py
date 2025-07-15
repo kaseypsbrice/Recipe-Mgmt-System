@@ -58,6 +58,7 @@ class RecipeOut(BaseModel):
     description: Optional[str]
     servings: int
     cook_time_min: int
+    img_path: Optional[str]
     created_at: datetime
     steps: List[StepOut]
     ingredients: List[IngredientOut]
@@ -70,5 +71,12 @@ class RecipeIn(BaseModel):
     description: Optional[str]
     servings: int
     cook_time_min: int
-    steps: List[StepOut]
-    ingredients: List[IngredientOut]
+    steps: List[StepIn]
+    ingredients: List[IngredientIn]
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    username: Optional[str] = None

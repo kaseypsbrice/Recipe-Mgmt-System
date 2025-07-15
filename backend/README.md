@@ -17,7 +17,7 @@ Navigate to:
 http://localhost:8000/docs
 ```
 
-FastAPI has built-in interactive documentation via Swagger.
+FastAPI has built-in interactive documentation via Swagger, which makes it easy to test the API.
 
 ## Database
 
@@ -43,12 +43,6 @@ Connect to the database:
 
 ```
 \c irms
-```
-
-After creating tables, check if the tables were created:
-
-```
-\dt
 ```
 
 Create a user that has full access to the database:

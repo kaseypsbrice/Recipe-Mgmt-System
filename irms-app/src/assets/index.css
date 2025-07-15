@@ -61,6 +61,7 @@ body {
     display: flex;
     margin-bottom: 5px;
 }
+
 /* Base for all buttons or bars */
 
 .search-bar {
@@ -88,6 +89,7 @@ body {
     flex-grow: 1;
     min-width: 0;
 }
+
 /* Firefox's default opacity is 0.5
  * This ensures that the opacity is 1.0
  * across all browsers. */
@@ -111,18 +113,24 @@ body {
     display: flex;
     flex-wrap: wrap;
     align-items: flex-start;
-    height: 50em;
     width: 100%;
     background-color: #ffffff80;
     margin-bottom: 10em;
     border-radius: 10px;
     border: 1px solid #bd7f6780;
+    padding-bottom: 4em;
 }
 
 .input-field {
     width: 100%;
     border: 1px solid #925746;
     background-color: #f4e8db;
+    padding-left: 1em;
+}
+
+.input-field:focus {
+  outline: none;
+  border: 2px solid green;
 }
 
 .add-btn {
@@ -150,12 +158,14 @@ body {
 }
 
 .upload-btn {
-    width: 2.5em;
-    height: 2.5em;
-    position: absolute;
-    right: 0;
-    margin-top: 18px;
+   width: 2.5em;
+   height: 2.5em;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   /* position: absolute;  ← removed */
 }
+
 
 .step-img-preview {
     margin-top: 20px;

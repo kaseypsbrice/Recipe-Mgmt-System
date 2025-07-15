@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, TIMESTAMP, Text, DECIMAL, func, create_engine
 from sqlalchemy.orm import relationship, sessionmaker, declarative_base
-from keys import IRMS_ADMIN_PASS
+from backend.keys import DB_USER, DB_PASS
 
 # Uses SQLAlchemy, an Object-Relational Mapper (ORM).
 # Provides a way to interact with a database using OOP principles
@@ -33,7 +33,7 @@ class Recipe(Base):
     recipe_id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey('users.user_id'), nullable=False)
     name = Column(String(100), nullable=False)
-    img_path = Column(String(255))
+    img_path = Column(Text, nullable=True)
     description = Column(Text)
     servings = Column(Integer)
     cook_time_min = Column(Integer)
@@ -55,7 +55,7 @@ class Step(Base):
 
     step_id = Column(Integer, primary_key=True, autoincrement=True)
     recipe_id = Column(Integer, ForeignKey('recipes.recipe_id'), nullable=False)
-    img_path = Column(String(255), nullable=False)
+    img_path = Column(Text, nullable=True)
     step_number = Column(Integer)
     instruction = Column(Text)
 
@@ -78,7 +78,7 @@ class Ingredient(Base):
     def __repr__(self):
         return f"<Ingredient(ingredient_id={self.ingredient_id}, name='{self.name}', recipe_id={self.recipe_id})>"
 
-DATABASE_URL = "postgresql://irms_admin:admin@localhost:5432/irms"
+DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASS}@localhost:5432/irms"
 # DATABASE_URL = postgresql://username:password@localhost:port_number/dbname
 
 engine = create_engine(DATABASE_URL)
