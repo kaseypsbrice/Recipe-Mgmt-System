@@ -108,6 +108,15 @@ body {
     justify-content: center;
 }
 
+.logout-btn {
+    background-color: #ddac98;
+    border: 1px solid #ac4646;
+    width: 10em;
+    justify-content: center;
+    margin-left: auto;
+    position: relative;
+}
+
 .create-recipe-form {
     position: relative;
     display: flex;

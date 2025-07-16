@@ -52,9 +52,17 @@ class IngredientIn(BaseModel):
     quantity: Annotated[float, Field(gt=0)]
     unit: Annotated[str, Field(max_length=20)]
 
+class AuthorOut(BaseModel):
+    user_id: int
+    username: str
+
+    model_config = ConfigDict(from_attributes=True)
+# Used to nest user info in RecipeOut
+
 class RecipeOut(BaseModel):
     recipe_id: int
     name: str
+    user: AuthorOut
     description: Optional[str]
     servings: int
     cook_time_min: int

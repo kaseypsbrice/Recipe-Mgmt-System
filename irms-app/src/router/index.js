@@ -6,6 +6,7 @@ import CreateNewRecipeView from '@/views/CreateNewRecipe.vue'
 import LoginView from '@/views/Login.vue'
 import SignupView from '@/views/Signup.vue'
 import RecipeView from '@/views/Recipe.vue'
+import EditRecipeView from '@/views/EditRecipe.vue'
 import { useAuth } from '../auth'
 
 const router = createRouter({
@@ -43,6 +44,11 @@ const router = createRouter({
       path: '/recipe/:id',
       name: 'RecipeDetail',
       component: RecipeView
+    },
+    {
+      path: '/edit-recipe/:id',
+      name: 'EditRecipe',
+      component: EditRecipeView
     }
   ],
 })

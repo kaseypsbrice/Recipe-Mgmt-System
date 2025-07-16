@@ -4,7 +4,7 @@ import { ref } from 'vue'
 import axios from 'axios'
 
 axios.defaults.baseURL = 'http://localhost:8000'
-const DEFAULT_IMAGE_URL = "http://localhost:8000/static/images/default.jpg";
+const DEFAULT_IMAGE_URL = 'http://localhost:8000/static/images/default_recipe_cover_image.jpg'
 
 const steps = ref(['']) // one initial step
 const imgPreviews = ref([null]) // parallel array for images

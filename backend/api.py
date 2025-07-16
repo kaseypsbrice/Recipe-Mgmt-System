@@ -144,6 +144,7 @@ def get_recipe(recipe_id: int, db: Session = Depends(get_db)):
     if not recipe:
         raise HTTPException(status_code=404, detail="Recipe not found")
     return recipe
+# Returns a recipe that matches a specific recipe_id
 
 @app.get("/my_recipes", response_model=List[RecipeOut])
 def get_my_recipes(
@@ -151,3 +152,76 @@ def get_my_recipes(
     current_user: User = Depends(get_current_user),
 ):
     return db.query(Recipe).filter(Recipe.user_id == current_user.user_id).all()
+# Returns all recipes by the user currently signed in
+
+@app.get("/recipes", response_model=List[RecipeOut])
+def get_all_recipes(db: Session = Depends(get_db)):
+    return db.query(Recipe).all()
+# Returns all recipes from all users
+
+@app.put(
+    "/recipes/{recipe_id}",
+    response_model=RecipeOut,
+    summary="Update an existing recipe",
+)
+def update_recipe(
+    recipe_id: int,
+    payload: RecipeIn,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    recipe = db.query(Recipe).filter(Recipe.recipe_id == recipe_id).first()
+    if not recipe:
+        raise HTTPException(status_code=404, detail="Recipe not found")
+    if recipe.user_id != current_user.user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not allowed to edit this recipe",
+        )
+    # fetch and authorisation
+
+    recipe.name          = payload.name
+    recipe.description   = payload.description
+    recipe.servings      = payload.servings
+    recipe.cook_time_min = payload.cook_time_min
+    recipe.img_path      = payload.img_path or recipe.img_path
+    # Update the basic fields
+
+    db.query(Step).filter(Step.recipe_id == recipe_id).delete()
+    for idx, step_in in enumerate(payload.steps, start=1):
+        recipe.steps.append(
+            Step(
+                step_number=idx,
+                instruction=step_in.instruction,
+                img_path=step_in.img_path or "",
+            )
+        )
+    # Replace steps
+
+    db.query(Ingredient).filter(Ingredient.recipe_id == recipe_id).delete()
+    for ing_in in payload.ingredients:
+        recipe.ingredients.append(
+            Ingredient(
+                name=ing_in.name,
+                quantity=ing_in.quantity,
+                unit=ing_in.unit or "",
+            )
+        )
+    # Replace ingredients
+
+    db.commit()
+    db.refresh(recipe)
+    return recipe
+    # Commit and return updated recipe
+
+@app.delete("/recipes/{recipe_id}", status_code=204)
+def delete_recipe(
+    recipe_id: int, 
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    recipe = db.query(Recipe).get(recipe_id)
+    if not recipe or recipe.user_id != current_user.user_id:
+        raise HTTPException(404, "Not found or not yours")
+    db.delete(recipe)
+    db.commit()
