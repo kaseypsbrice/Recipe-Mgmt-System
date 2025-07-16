@@ -1,0 +1,57 @@
+=======================================================================
+        Interactive Recipe Mangament System (IRMS) — Help & Guide
+=======================================================================
+
+OVERVIEW
+This IRMS lets you browse, create, edit, and delete cooking recipes.
+You can also adjust serving sizes to scale ingredient quantities on the fly.
+
+API ENDPOINTS
+  • GET  /recipes
+      – List all recipes from every user.
+
+  • GET  /recipes/{id}
+      – Retrieve a single recipe by its ID.
+
+  • POST /create_recipe
+      – Create a new recipe. Requires JSON body:
+        {
+          "name": "string",
+          "description": "string",
+          "servings": 4,
+          "cook_time_min": 30,
+          "img_path": "string (URL or base64)",
+          "steps": [ { "instruction": "string", "img_path": "string" }, … ],
+          "ingredients": [ { "name": "string", "quantity": 100, "unit": "g" }, … ]
+        }
+      – Must include Bearer token in Authorization header.
+
+  • PUT  /recipes/{id}
+      – Update an existing recipe (same JSON shape as above).
+      – Only the recipe’s owner can edit.
+
+  • DELETE /recipes/{id}
+      – Remove a recipe permanently.
+      – Only the recipe’s owner can delete.
+
+  • GET  /help
+      – Returns the contents of this help file as plain text.
+
+FRONTEND QUICK START
+ 1. Sign up or log in via the “Profile” page.
+ 2. Click “New Recipe” to open the creation form.
+ 3. Fill in recipe name, description, servings, cook time, steps, ingredients.
+ 4. Upload cover image or step images as needed.
+ 5. Hit “Submit” to save—your recipe ID will be returned.
+ 6. On the Explore page, click a recipe’s card to view details.
+ 7. Use the “Servings” input on the recipe view to scale ingredients.
+ 8. Edit or Delete buttons appear if you own the recipe.
+
+TROUBLESHOOTING
+  • “401 Unauthorized”: Make sure you’re logged in and your token is valid.
+  • “404 Not Found”: The recipe ID does not exist or you don’t have access.
+  • Image won’t load? Check your browser’s console for CORS errors.
+  • For all other issues, check the server logs and consult the API docs.
+
+Thank you for using IRMS!
+Happy cooking 🍳

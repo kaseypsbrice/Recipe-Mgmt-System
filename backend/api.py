@@ -6,6 +6,8 @@ from backend.database import get_db, User, Recipe, Step, Ingredient
 from backend.security import hash_password, verify_password, create_access_token, decode_access_token
 from backend.response_model import UserOut, UserIn, Token, TokenData, RecipeIn, RecipeOut
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import PlainTextResponse
+from datetime import datetime, timezone
 
 app = FastAPI()
 
@@ -136,6 +138,15 @@ def create_recipe(
     db.commit()
     db.refresh(recipe)
 
+    # --- File write: append a log entry ---
+    with open("backend/static/recipe_logs/recipe_log.txt", "a") as log_file:
+        log_file.write(
+            f"{datetime.now(timezone.utc).isoformat()}  "
+            f"user={current_user.username}  "
+            f"recipe_id={recipe.recipe_id}  "
+            f"name={recipe.name}\n"
+        )
+
     return {"recipe_id": recipe.recipe_id}
 
 @app.get("/recipes/{recipe_id}", response_model=RecipeOut)
@@ -225,3 +236,9 @@ def delete_recipe(
         raise HTTPException(404, "Not found or not yours")
     db.delete(recipe)
     db.commit()
+
+@app.get("/help", response_class=PlainTextResponse)
+def get_help_text():
+    with open("backend/static/help.txt", "r") as help_file:
+        content = help_file.read()
+    return content
