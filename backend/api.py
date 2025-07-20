@@ -5,6 +5,8 @@ from typing import List
 from backend.database import get_db, User, Recipe, Step, Ingredient
 from backend.security import hash_password, verify_password, create_access_token, decode_access_token
 from backend.response_model import UserOut, UserIn, Token, TokenData, RecipeIn, RecipeOut
+from backend.DynamicContentLoader import DynamicContentLoader
+from backend.RecipeBook import RecipeBook
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import PlainTextResponse
 from datetime import datetime, timezone
@@ -49,7 +51,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme),
         raise credentials_exc
     return user
 
-@app.post("/users/", response_model=UserOut)
+@app.post("/users/create_user", response_model=UserOut)
 def create_user(user: UserIn, db: Session = Depends(get_db)):
     pwd_hash = hash_password(user.password)
     new_user = User(username=user.username, password_hash=pwd_hash)
@@ -112,7 +114,7 @@ def create_recipe(
         img_path=payload.img_path or "",
         cook_time_min=payload.cook_time_min,
     )
-    # Create Recipe tied to the logged-in user
+    # Creates a Recipe tied to the logged-in user
 
     for idx, step_in in enumerate(payload.steps, start=1):
         recipe.steps.append(
@@ -122,7 +124,7 @@ def create_recipe(
                 img_path=step_in.img_path or "",
             )
         )
-    # Append Steps in order
+    # Appends Steps in order
 
     for ing_in in payload.ingredients:
         recipe.ingredients.append(
@@ -132,13 +134,12 @@ def create_recipe(
                 unit=ing_in.unit or "",
             )
         )
-    # Append Ingredients
+    # Appends Ingredients
 
     db.add(recipe)
     db.commit()
     db.refresh(recipe)
 
-    # --- File write: append a log entry ---
     with open("backend/static/recipe_logs/recipe_log.txt", "a") as log_file:
         log_file.write(
             f"{datetime.now(timezone.utc).isoformat()}  "
@@ -146,6 +147,11 @@ def create_recipe(
             f"recipe_id={recipe.recipe_id}  "
             f"name={recipe.name}\n"
         )
+    # Write File: Appends a log entry to a txt file
+
+    book = RecipeBook([recipe])
+    book.log_full_recipes(current_user)
+    # Write File: Logs full recipe details
 
     return {"recipe_id": recipe.recipe_id}
 
@@ -242,3 +248,12 @@ def get_help_text():
     with open("backend/static/help.txt", "r") as help_file:
         content = help_file.read()
     return content
+
+@app.get("/recipes/{recipe_id}/render_steps")
+def render_steps(recipe_id: int, db: Session = Depends(get_db)):
+    recipe = db.query(Recipe).get(recipe_id)
+    if not recipe:
+        raise HTTPException(404, "Recipe not found")
+
+    display = DynamicContentLoader(recipe)
+    return { "steps": display.get_rendered_steps() }

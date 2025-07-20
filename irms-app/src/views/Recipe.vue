@@ -9,6 +9,16 @@ const recipeId = route.params.id
 const recipe = ref(null)
 const error = ref('')
 const selectedServings = ref(1)
+const renderedSteps = ref([])
+
+async function fetchRenderedSteps() {
+  try {
+    const res = await axios.get(`/recipes/${recipeId}/render_steps`)
+    renderedSteps.value = res.data.steps
+  } catch {
+    error.value = 'Failed to load rendered steps.'
+  }
+}
 
 async function fetchRecipe() {
   try {
@@ -22,6 +32,7 @@ async function fetchRecipe() {
 
 onMounted(() => {
   fetchRecipe()
+  fetchRenderedSteps()
 })
 
 const scaledIngredients = computed(() => {
@@ -73,13 +84,11 @@ const scaledIngredients = computed(() => {
 
       <section>
         <h2 class="text-2xl font-semibold mb-2">Steps</h2>
-        <ol class="list-decimal pl-5 space-y-4">
-          <li v-for="step in recipe.steps" :key="step.step_id">
-            <p>{{ step.instruction }}</p>
-            <img v-if="step.img_path" :src="step.img_path" alt="Step image" class="mt-2 max-w-full rounded" />
-          </li>
-        </ol>
+        <div class="space-y-6">
+          <div v-for="(html, idx) in renderedSteps" :key="idx" v-html="html" />
+        </div>
       </section>
+
     </div>
 
     <div v-else>

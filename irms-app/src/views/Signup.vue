@@ -44,7 +44,7 @@ export default {
 
     async function onSubmit() {
       try {
-        await axios.post('/users/', {
+        await axios.post('/users/create_user', {
           username: username.value,
           password: password.value,
         })

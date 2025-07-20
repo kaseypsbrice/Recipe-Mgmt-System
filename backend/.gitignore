@@ -1,2 +1,4 @@
 keys.py
 __pycache__/
+static/saved_recipes/
+static/recipe_logs/
