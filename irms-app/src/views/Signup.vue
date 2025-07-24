@@ -2,20 +2,8 @@
   <main class="pt-10 px-64">
     <div class="text-3xl py-3 font-bold">Sign Up</div>
     <form @submit.prevent="onSubmit" class="flex flex-col gap-4 w-1/3">
-      <input
-        v-model="username"
-        type="text"
-        placeholder="Username"
-        class="border p-2"
-        required
-      />
-      <input
-        v-model="password"
-        type="password"
-        placeholder="Password"
-        class="border p-2"
-        required
-      />
+      <input v-model="username" type="text" placeholder="Username" class="border p-2" required />
+      <input v-model="password" type="password" placeholder="Password" class="border p-2" required />
       <button type="submit" class="bg-amber-800 text-white p-2">
         Create Account
       </button>
@@ -43,6 +31,10 @@ export default {
     const router = useRouter()
 
     async function onSubmit() {
+      if (!username.value || !password.value) {
+        alert('Signup failed: All fields are required')
+        return
+      }
       try {
         await axios.post('/users/create_user', {
           username: username.value,
