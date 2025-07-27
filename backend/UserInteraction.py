@@ -3,10 +3,12 @@ from abc import ABC, abstractmethod
 class UserInteraction(ABC):
     def __init__(self, user_id):
         self.user_id = user_id
+        # Each interaction is tied to a specific user_id
 
     @abstractmethod
     def handle(self):
         pass
+# Abstract class for all user interactions
 
 class FeedbackComment(UserInteraction):
     def __init__(self, user_id, comment_text):
@@ -15,6 +17,7 @@ class FeedbackComment(UserInteraction):
 
     def handle(self):
         return f"User {self.user_id} commented: {self.comment_text}"
+# Calls parent constructor, stores comment content
 
 class Rating(UserInteraction):
     def __init__(self, user_id, rating_value):
@@ -38,4 +41,6 @@ class InteractionHandler:
 
     def process_all(self):
         return [i.handle() for i in self.interactions]
-# Object aggregation for user interaction
+# Aggregates multiple interactions and processes them
+# Stores interactions in a unified list
+# Calls handle() on each interaction

@@ -4,12 +4,15 @@ import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 
 axios.defaults.baseURL = 'http://localhost:8000'
+// Default URL for Axios requests-- :8000 is the FastAPI endpoint
 
 const DEFAULT_IMAGE = 'http://localhost:8000/static/images/default_recipe_cover_image.jpg'
+// Default cover image for recipes where there's no user input. 
 const route = useRoute()
 const router = useRouter()
-const recipeId = route.params.id
+const recipeId = route.params.id // Recipe ID from route for editing
 
+// --- Reactive state definitions for form input --- // 
 const form = ref({
   name: '',
   description: '',
@@ -19,14 +22,16 @@ const form = ref({
   steps: [{ instruction: '', img_path: '' }],
   ingredients: [{ name: '', quantity: null, unit: '' }],
 })
+// ------------------------------------------------- //
 
-const submitStatus = ref({ success: false, error: '' })
-const isSubmitting = ref(false)
+const submitStatus = ref({ success: false, error: '' }) // Submission status
+const isSubmitting = ref(false) // Prevents duplicate submissions
 
 onMounted(async () => {
+  // Loads recipe data when the component is mounted
   if (!recipeId) return
   try {
-    const { data } = await axios.get(`/recipes/${recipeId}`)
+    const { data } = await axios.get(`/recipes/${recipeId}`) // Fetches recipe data by ID
     form.value = {
       name: data.name,
       description: data.description,
@@ -35,10 +40,10 @@ onMounted(async () => {
       img_path: data.img_path || DEFAULT_IMAGE,
       steps: data.steps.map(s => ({ instruction: s.instruction, img_path: s.img_path || '' })),
       ingredients: data.ingredients.map(i => ({ name: i.name, quantity: i.quantity, unit: i.unit })),
-    }
+    } // Populates form fields with existing recipe data
   } catch (e) {
     console.error('Failed to load recipe:', e)
-  }
+  } // Logs an error if the request fails
 })
 
 function handleCoverUpload(e) {
@@ -51,15 +56,21 @@ function handleCoverUpload(e) {
     form.value.img_path = DEFAULT_IMAGE
   }
 }
+// Grabs the selected file, converts it to base64 to store.
+// Resets the image to the default image if no image is provided.
 
 function addStep() {
   form.value.steps.push({ instruction: '', img_path: '' })
-}
+} // Adds a blank step instruction
+
 function removeStep(idx) {
   if (form.value.steps.length > 1) {
     form.value.steps.splice(idx, 1)
   }
-}
+} 
+// Removes a step, but requires there to be at least one step in the 
+// recipe at all times.
+
 function handleStepImageUpload(e, idx) {
   const file = e.target.files[0]
   if (file?.type.startsWith('image/')) {
@@ -70,17 +81,21 @@ function handleStepImageUpload(e, idx) {
     form.value.steps[idx].img_path = ''
   }
 }
+// Loads step images.
+// Clears the image if it's an invalid input.
 
 function addIngredient() {
   form.value.ingredients.push({ name: '', quantity: null, unit: '' })
-}
+} // Adds a new blank ingredient.
+
 function removeIngredient(idx) {
   if (form.value.ingredients.length > 1) {
     form.value.ingredients.splice(idx, 1)
   }
-}
+} // Removes an ingredient as long as there's more than one.
 
 async function onSubmit() {
+  // Handles form submission.
   isSubmitting.value = true
   submitStatus.value = { success: false, error: '' }
 
@@ -89,24 +104,25 @@ async function onSubmit() {
     submitStatus.value.error = 'You must be logged in'
     isSubmitting.value = false
     return
-  }
+  } // Confirms whether the user is logged in by checking for a JWT token.
 
   if (form.value.name.trim().length < 3) {
     submitStatus.value.error = 'Recipe name must be at least 3 chars'
     isSubmitting.value = false
     return
-  }
+  } // Basic form validation
 
   try {
     const method = recipeId ? 'put' : 'post'
     const url = recipeId ? `/recipes/${recipeId}` : '/create_recipe'
     const res = await axios[method](url, form.value, {
       headers: { Authorization: `Bearer ${token}` }
-    })
+    }) // Determines API method for request 
 
     const id = recipeId || res.data.recipe_id
+    // Uses existing recipe ID or newly created recipe ID from response
     submitStatus.value.success = true
-    setTimeout(() => router.push(`/recipe/${id}`), 1200)
+    setTimeout(() => router.push(`/recipe/${id}`), 1200) // Redirects user to recipe's page
   } catch (err) {
     submitStatus.value.error = err.response?.data.detail || 'Submission failed'
   } finally {

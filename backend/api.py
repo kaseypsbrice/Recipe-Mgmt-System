@@ -9,6 +9,7 @@ from backend.DynamicContentLoader import DynamicContentLoader
 from backend.RecipeBook import RecipeBook
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import PlainTextResponse
+from fastapi.staticfiles import StaticFiles
 from datetime import datetime, timezone
 
 app = FastAPI()
@@ -22,8 +23,6 @@ app.add_middleware(
 )
 # Allows connections originating from any ports on localhost.
 
-from fastapi.staticfiles import StaticFiles
-
 app.mount("/static", StaticFiles(directory="backend/static"), name="static")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -33,6 +32,8 @@ def authenticate_user(db: Session, username: str, password: str):
     if not user or not verify_password(password, user.password_hash):
         return None
     return user
+# Queries the database for a user matching the provided username.
+# If the credentials are valid, it will return the user object.
 
 async def get_current_user(token: str = Depends(oauth2_scheme),
                            db: Session = Depends(get_db)) -> User:
@@ -50,6 +51,12 @@ async def get_current_user(token: str = Depends(oauth2_scheme),
     if user is None:
         raise credentials_exc
     return user
+# Parameters: Extracts token from authorisation header, gets DB session from FastAPI dependency.
+# * Defines standard HTTP 401 Unauthorised error for any credential failures.
+# * Decodes the access token and retrieves the 'sub' claim (username).
+# * Queries the database to retrieve the user associated with the token
+# * Triggers HTTP exception error if token is missing or valid but user no longer exists.
+# * Returns user object if the user has been successfully validated.
 
 @app.post("/users/create_user", response_model=UserOut)
 def create_user(user: UserIn, db: Session = Depends(get_db)):

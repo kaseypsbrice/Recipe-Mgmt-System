@@ -30,15 +30,18 @@ import { useAuth } from '../auth';
 
 export default {
   setup() {
+    // --- Reactive variables --- //
     const username = ref('');
     const password = ref('');
+    // ------------------------- //
     const router = useRouter();
-    const { login } = useAuth();
+    const { login } = useAuth(); // Extracts login method
 
     async function onSubmit() {
       try {
         await login(username.value, password.value);
         router.push('/profile');
+        // Attempts to login with username and password
       } catch (err) {
         alert('Invalid credentials');
       }

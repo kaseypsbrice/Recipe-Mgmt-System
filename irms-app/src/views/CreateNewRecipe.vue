@@ -4,10 +4,14 @@ import { ref } from 'vue'
 import axios from 'axios'
 
 axios.defaults.baseURL = 'http://localhost:8000'
-const DEFAULT_IMAGE_URL = 'http://localhost:8000/static/images/default_recipe_cover_image.jpg'
+// Default URL for Axios requests-- :8000 is the FastAPI endpoint
 
-const steps = ref(['']) // one initial step
-const imgPreviews = ref([null]) // parallel array for images
+const DEFAULT_IMAGE_URL = 'http://localhost:8000/static/images/default_recipe_cover_image.jpg'
+// Default cover image for recipes where there's no user input. 
+
+// --- Reactive state definitions for form input --- // 
+const steps = ref([''])
+const imgPreviews = ref([null])
 const ingredients = ref([
   { name: '', quantity: 0, unit: '' }
 ])
@@ -16,7 +20,7 @@ const recipeName = ref('')
 const recipeDescription = ref('')
 const servings = ref('')
 const cookTime = ref('')
-// Form refs
+// ------------------------------------------------- //
 
 function handleCoverUpload(e) {
   const file = e.target.files[0]
@@ -28,15 +32,19 @@ function handleCoverUpload(e) {
     coverImagePreview.value = null
   }
 }
+// Grabs the selected file and loads the preview image in the UI.
+// Reads the file as a base84 URL. If the input is invalid, it'll reset the preview.
 
 function addStep() {
   steps.value.push('')
   imgPreviews.value.push(null)
 }
+// Adds a new blank step instruction
 
 function addIngredient() {
   ingredients.value.push({ name: '', quantity: 0, unit: '' })
 }
+// Adds a new blank ingredient entry
 
 function handleImageUpload(event, idx) {
   const file = event.target.files[0]
@@ -50,6 +58,8 @@ function handleImageUpload(event, idx) {
     imgPreviews.value[idx] = null
   }
 }
+// Loads step images, inserts provided image into an array for step images.
+// Clears the image if it's an invalid input.
 
 function removeStep(idx) {
   steps.value.splice(idx, 1)
@@ -60,8 +70,7 @@ function removeIngredient(idx) {
   ingredients.value.splice(idx, 1)
 }
 
-// --- Code that implements creation of recipe
-
+// --- Code that implements creation of recipe --- //
 
 const router = useRouter()
 
@@ -69,13 +78,14 @@ const submitStatus = ref({
   success: false,
   error: ''
 })
-// Status object
+// Tracks submission status of form.
 
 async function onSubmit() {
   console.log('Info: onSubmit fired')
-  submitStatus.value = { success: false, error: '' }
+  submitStatus.value = { success: false, error: '' } 
+  // ^ Resets status for each attempt at submission
 
-  const token = localStorage.getItem('token')
+  const token = localStorage.getItem('token') // Stores JWT from local storage
   if (!token) {
     submitStatus.value.error = 'You must be logged in'
     return
@@ -102,19 +112,20 @@ async function onSubmit() {
       unit: ing.unit
     }))
   }
+  // Builds a request payload with form values and image previews.
 
   try {
     const res = await axios.post('/create_recipe', payload, {
       headers: {
         Authorization: `Bearer ${token}`
       }
-    })
+    }) // Posts our request to create a new recipe
 
-    const { recipe_id } = res.data
+    const { recipe_id } = res.data // Gets newly created recipe ID from response
     submitStatus.value.success = true
 
     setTimeout(() => {
-      router.push(`/recipe/${recipe_id}`)
+      router.push(`/recipe/${recipe_id}`) // Navigate to recipe's page
     }, 1200)
 
   } catch (err) {
@@ -122,10 +133,9 @@ async function onSubmit() {
       submitStatus.value.error = err.response.data.detail || 'Submission error'
     } else {
       submitStatus.value.error = 'Network error'
-    }
+    } // Provide detailed error response if request fails.
   }
 }
-
 
 </script>
 

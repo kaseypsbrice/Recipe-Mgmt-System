@@ -5,12 +5,14 @@ import { useAuth } from '../auth'
 import { useRouter, RouterLink } from 'vue-router'
 
 axios.defaults.baseURL = 'http://localhost:8000'
-
+// Default URL for Axios requests-- :8000 is the FastAPI endpoint
 const defaultImage = 'http://localhost:8000/static/images/default_recipe_cover_image.jpg'
-
+// Default image for recipes without a cover image defined.
 const { state, isLoggedIn, fetchUser } = useAuth()
+// Destructures auth state and methods
 const router = useRouter()
 
+// --- Reactive variables --- //
 const user = computed(() => state.user)
 const recipes = ref([])
 const error = ref('')
@@ -25,6 +27,8 @@ function logout() {
         router.push('/')
     }
 }
+// Removes stored auth token, clears the global auth state and user info.
+// Redirects the user to the home page.
 
 async function deleteRecipe(id) {
   const ok = confirm("Are you sure you want to delete this recipe? This cannot be undone.")
@@ -35,10 +39,10 @@ async function deleteRecipe(id) {
     const token = localStorage.getItem('token')
     await axios.delete(`/recipes/${id}`, {
       headers: { Authorization: `Bearer ${token}` }
-    }) // Call API
+    }) // Call API to delete the recipe
 
     recipes.value = recipes.value.filter(r => r.recipe_id !== id)
-    // Remove from recipe array
+    // Removes the recipe from the recipe array, removing it from the UI
 
     submitStatus.value = { success: true, error: '' }
   } catch (err) {
@@ -51,13 +55,14 @@ async function deleteRecipe(id) {
 
 onMounted(async () => {
     if (state.token && !state.user) await fetchUser()
-
+    // Fetches user if the token exists but the user info hasn't loaded
     if (state.token) {
         try {
             const res = await axios.get('/my_recipes', {
                 headers: { Authorization: `Bearer ${state.token}` }
             })
             recipes.value = res.data
+            // Gets all of the user's recipes and populates the recipe array
         } catch (err) {
             error.value = 'Failed to load your recipes'
             console.error(err)

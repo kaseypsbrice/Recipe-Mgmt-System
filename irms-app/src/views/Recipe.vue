@@ -6,6 +6,7 @@ import axios from 'axios'
 const route = useRoute()
 const recipeId = route.params.id
 
+// --- Reactive variables --- //
 const recipe = ref(null)
 const error = ref('')
 const selectedServings = ref(1)
@@ -18,7 +19,7 @@ async function fetchRenderedSteps() {
   } catch {
     error.value = 'Failed to load rendered steps.'
   }
-}
+} // Fetches recipe's steps
 
 async function fetchRecipe() {
   try {
@@ -28,7 +29,7 @@ async function fetchRecipe() {
   } catch (e) {
     error.value = 'Failed to load recipe.'
   }
-}
+} // Fetches recipe details
 
 onMounted(() => {
   fetchRecipe()

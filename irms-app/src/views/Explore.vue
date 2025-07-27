@@ -4,15 +4,21 @@ import axios from 'axios'
 import { RouterLink } from 'vue-router'
 
 axios.defaults.baseURL = 'http://localhost:8000'
+// Default URL for Axios requests-- :8000 is the FastAPI endpoint
 
 const recipes = ref([])
+// Holds array of recipes fetched from the backend
 const defaultImage = 'http://localhost:8000/static/images/default_recipe_cover_image.jpg'
+// Default cover image for recipes without user added cover images
 
 onMounted(async () => {
   try {
     const res = await axios.get('/recipes')
+    // Get request fetches all recipes from backend
     recipes.value = res.data
+    // Fills reactive recipe array with data from request
   } catch (err) {
+    errorMessage.value = 'Unable to load recipes. Please try again later.'
     console.error('Failed to load recipes:', err)
   }
 })

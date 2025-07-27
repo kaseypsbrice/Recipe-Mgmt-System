@@ -39,9 +39,9 @@ export default {
         await axios.post('/users/create_user', {
           username: username.value,
           password: password.value,
-        })
-        // After signup, redirect to login
+        }) // Attempts to sign-up with username and password input
         router.push('/login')
+        // Redirects user to the login page
       } catch (err) {
         alert('Signup failed: ' + err.response?.data?.detail || err.message)
       }
